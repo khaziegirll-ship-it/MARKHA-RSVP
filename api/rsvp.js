@@ -17,8 +17,8 @@ module.exports = async (req, res) => {
   const attending = body.attending === "yes" ? "yes" : body.attending === "no" ? "no" : "";
   if (!id || !name || !attending) return res.status(400).json({ error: "Name and attendance are required" });
 
-  const partySize = attending === "yes" ? Math.max(1, Math.min(3, parseInt(body.partySize, 10) || 1)) : 0;
-  // One name per extra seat: "Ako + 1" needs 1 guest name, "Ako + 2" needs 2.
+  const partySize = attending === "yes" ? Math.max(1, Math.min(2, parseInt(body.partySize, 10) || 1)) : 0;
+  // Max one guest (+1). "Ako + 1" needs the guest's name.
   const rawGuests = Array.isArray(body.guests) ? body.guests : [];
   const guests = [];
   for (let i = 0; i < Math.max(0, partySize - 1); i++) guests.push(clip(rawGuests[i], 80));

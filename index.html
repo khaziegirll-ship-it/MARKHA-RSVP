@@ -259,19 +259,14 @@ html { scroll-behavior: smooth; }
         <select id="f-party">
           <option value="1">Ako lang</option>
           <option value="2">Ako + 1</option>
-          <option value="3">Ako + 2</option>
         </select>
       </div>
 
       <div class="field" id="guest-names" hidden>
-        <p class="field-help">Pakilagay ang pangalan ng kasama mo para ma-reserve ang upuan nila.</p>
+        <p class="field-help">Isang kasama (+1) lang ang puwede. Pakilagay ang pangalan niya para ma-reserve ang upuan.</p>
         <div class="field" id="guest1-field">
-          <label class="lbl" for="f-guest1">Pangalan ng Guest 1</label>
+          <label class="lbl" for="f-guest1">Pangalan ng kasama mo (+1)</label>
           <input id="f-guest1" type="text" maxlength="80" autocomplete="off" placeholder="hal. Juan Dela Cruz">
-        </div>
-        <div class="field" id="guest2-field">
-          <label class="lbl" for="f-guest2">Pangalan ng Guest 2</label>
-          <input id="f-guest2" type="text" maxlength="80" autocomplete="off" placeholder="hal. Ana Reyes">
         </div>
       </div>
 
@@ -313,7 +308,7 @@ html { scroll-behavior: smooth; }
 (function () {
   const $ = (id) => document.getElementById(id);
   const form = $("rsvp-form"), statusEl = $("status"), notice = $("notice");
-  const MAX_SEATS = 3;
+  const MAX_SEATS = 2;
   const KEY = "markha-rsvp-reply";
   let saving = false;
 
@@ -349,10 +344,9 @@ html { scroll-behavior: smooth; }
     const g = guestCount();
     $("guest-names").hidden = g < 1;
     $("guest1-field").hidden = g < 1;
-    $("guest2-field").hidden = g < 2;
   }
   function guestNames() {
-    return ["f-guest1", "f-guest2"].slice(0, guestCount()).map((id) => $(id).value.trim());
+    return ["f-guest1"].slice(0, guestCount()).map((id) => $(id).value.trim());
   }
   form.addEventListener("change", syncParty);
 
@@ -375,10 +369,9 @@ html { scroll-behavior: smooth; }
   function fillForm(r) {
     $("f-name").value = r.name || "";
     if (r.attending) $(r.attending === "yes" ? "f-yes" : "f-no").checked = true;
-    $("f-party").value = String(r.partySize || 1);
+    $("f-party").value = String(Math.min(MAX_SEATS, r.partySize || 1));
     const g = Array.isArray(r.guests) ? r.guests : [];
     $("f-guest1").value = g[0] || "";
-    $("f-guest2").value = g[1] || "";
     $("f-monito").value = (r.monito === "yes" || r.monito === true) ? "yes" : (r.monito === "no" || r.monito === false) ? "no" : "";
     $("f-contact").value = r.contact || "";
     $("f-msg").value = r.message || "";
@@ -394,7 +387,7 @@ html { scroll-behavior: smooth; }
     if (!attending) { setStatus("Pumili muna kung makakapunta ka o hindi.", true); return; }
     const guests = attending === "yes" ? guestNames() : [];
     const missing = guests.findIndex((g) => !g);
-    if (missing > -1) { setStatus("Pakilagay ang pangalan ng Guest " + (missing + 1) + ".", true); $("f-guest" + (missing + 1)).focus(); return; }
+    if (missing > -1) { setStatus("Pakilagay ang pangalan ng kasama mo (+1).", true); $("f-guest" + (missing + 1)).focus(); return; }
     if (!$("f-monito").value) { setStatus("Pumili ng Yes o No para sa Monito Monita.", true); $("f-monito").focus(); return; }
     const prev = loadSaved();
     const reply = {
