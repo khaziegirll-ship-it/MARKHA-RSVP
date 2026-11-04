@@ -4,25 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Markha Christmas & Year End Party – RSVP</title>
-<meta name="description" content="You're invited to the Markha Christmas & Year End Party, December 19 at 7:00 pm. RSVP closes by Nov 14.">
-<meta property="og:title" content="Markha Christmas & Year End Party">
+<meta name="description" content="Markha Christmas &amp; Year End Party · December 19, 7:00 pm · RSVP closes by Nov 14 · Limited seats only">
+<meta property="og:title" content="Markha Christmas &amp; Year End Party">
 <meta property="og:description" content="December 19, 7:00 pm · RSVP closes by Nov 14 · Limited seats only">
-<meta property="og:image" content="invite.jpg">
-<meta property="og:type" content="website">
+<meta property="og:image" content="/invite.jpg">
 <meta name="theme-color" content="#6E0B14">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%236E0B14'/%3E%3Ctext x='50' y='68' font-size='54' text-anchor='middle' fill='%23F2EEE2' font-family='Georgia,serif'%3EM%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=Jost:wght@400;500;600&family=Pinyon+Script&display=swap">
 <style>
+body { margin: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+/* Layout: the invitation is the cover; an arched cream reply card sits beside it (stacked on phones), all on a woven tartan ground. Single deliberate look in both themes. */
 :root {
   --cream: #F2EEE2;
   --cream-deep: #E6DFCC;
-  --paper: #FBF9F3;
   --ink: #2C2826;
   --ink-soft: #6A5F58;
   --burgundy: #6E0B14;
   --red: #A8141C;
+  --forest: #17322A;
   --gold: #B8913F;
   --rule: #CDBFA6;
   --font-script: "Pinyon Script", "Snell Roundhand", cursive;
@@ -31,23 +34,19 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
 body {
-  margin: 0;
   background-color: var(--burgundy);
   background-image:
     repeating-linear-gradient(90deg, rgba(23,50,42,.55) 0 38px, transparent 38px 76px, rgba(23,50,42,.35) 76px 84px, transparent 84px 152px),
     repeating-linear-gradient(0deg, rgba(23,50,42,.55) 0 38px, transparent 38px 76px, rgba(23,50,42,.35) 76px 84px, transparent 84px 152px),
     repeating-linear-gradient(90deg, transparent 0 112px, rgba(184,145,63,.55) 112px 114px, transparent 114px 152px),
-    repeating-linear-gradient(0deg, transparent 0 112px, rgba(184,145,63,.55) 112px 114px, transparent 114px 152px);
+    repeating-linear-gradient(0deg, transparent 0 112px, rgba(184,145,63,.55) 112px 114px, transparent 114px 152px),
+    repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 1px, transparent 1px 3px);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.55;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-img { max-width: 100%; }
 .wrap {
   max-width: 1160px;
   margin: 0 auto;
@@ -59,46 +58,130 @@ img { max-width: 100%; }
   gap: 40px;
   align-items: start;
 }
-.cover { position: sticky; top: 24px; }
+.cover { position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); }
 .cover img {
-  display: block; width: 100%; height: auto; border-radius: 4px;
+  display: block; width: 100%; height: auto;
+  border-radius: 4px;
   box-shadow: 0 2px 0 rgba(0,0,0,.25), 0 24px 60px rgba(0,0,0,.45);
 }
+.cover-note {
+  margin-top: 14px; text-align: center; color: var(--cream);
+  font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .85;
+}
 .reply-link { display: none; }
+
 .card {
   background: var(--cream);
   border-radius: 999px 999px 6px 6px / 260px 260px 6px 6px;
-  padding: 72px clamp(16px, 4vw, 48px) 40px;
+  padding: 72px clamp(20px, 5vw, 56px) 44px;
   box-shadow: 0 24px 60px rgba(0,0,0,.4);
   outline: 1px solid var(--burgundy);
   outline-offset: -10px;
-  display: grid; gap: 24px;
+  display: grid; gap: 28px;
   min-width: 0;
 }
-.head { text-align: center; display: grid; gap: 2px; justify-items: center; }
-.eyebrow { font-size: 13px; letter-spacing: .28em; text-transform: uppercase; }
+.head { text-align: center; display: grid; gap: 2px; }
+.eyebrow { font-size: 13px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink); }
 .countdown { display: flex; justify-content: center; gap: 8px; margin: 10px 0 14px; }
-.countdown div { display: grid; justify-items: center; min-width: 58px; padding: 8px 6px 6px; border: 1px solid var(--burgundy); border-radius: 3px; background: var(--paper); }
+.countdown div { display: grid; justify-items: center; min-width: 58px; padding: 8px 6px 6px; border: 1px solid var(--burgundy); border-radius: 3px; background: #FBF9F3; }
 .countdown b { font-family: var(--font-display); font-weight: 500; font-size: 26px; line-height: 1; color: var(--red); font-variant-numeric: tabular-nums; }
 .countdown span { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; }
 .cd-closed { margin: 10px 0 14px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; color: var(--red); }
-h1 { margin: 0; font-weight: normal; line-height: 1; }
-.script-name { font-family: var(--font-script); font-size: clamp(56px, 9vw, 84px); display: block; }
-.caps { font-family: var(--font-display); font-weight: 600; font-size: clamp(24px, 4vw, 34px); color: var(--red); display: block; margin-top: -4px; text-wrap: balance; }
+@media (max-width: 400px) { .countdown { gap: 6px; } .countdown div { min-width: 0; flex: 1; } .countdown b { font-size: 22px; } }
+.head h1 { margin: 0; font-weight: normal; line-height: 1; }
+.head .script-name { font-family: var(--font-script); font-size: clamp(56px, 9vw, 84px); color: var(--ink); display: block; }
+.head .caps { font-family: var(--font-display); font-weight: 600; font-size: clamp(24px, 4vw, 34px); color: var(--red); letter-spacing: .02em; display: block; margin-top: -4px; text-wrap: balance; }
 .when {
-  display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 14px;
   border-top: 1px dotted var(--ink); border-bottom: 1px dotted var(--ink);
   padding-block: 10px; margin-top: 14px; font-size: 17px;
 }
 .when b { font-family: var(--font-display); font-size: 30px; color: var(--red); font-weight: 500; line-height: 1; }
-.seats-note { margin: 0; text-align: center; font-size: 15px; color: var(--burgundy); border: 1px solid var(--burgundy); border-radius: 3px; padding: 12px 16px; background: var(--paper); text-wrap: balance; }
+
+form { display: grid; gap: 20px; }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; min-width: 0; }
+legend, label.lbl { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; padding: 0; margin-bottom: 8px; }
+label.lbl { margin-bottom: 0; }
+.field { display: grid; gap: 8px; min-width: 0; }
+input[type=text], textarea, select {
+  width: 100%; font: inherit; color: var(--ink);
+  background: #FBF9F3; border: 1px solid var(--rule); border-radius: 3px;
+  padding: 11px 12px;
+}
+textarea { min-height: 84px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, .choice input:focus-visible + span {
+  outline: 2px solid var(--gold); outline-offset: 2px;
+}
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choice { position: relative; }
+.choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.choice span {
+  display: grid; gap: 2px; text-align: center; padding: 14px 10px;
+  border: 1px solid var(--rule); border-radius: 3px; background: #FBF9F3; cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.choice span strong { font-family: var(--font-script); font-weight: normal; font-size: 30px; line-height: 1.1; }
+.choice span small { font-size: 12px; color: var(--ink-soft); letter-spacing: .06em; }
+.choice input:checked + span { background: var(--burgundy); border-color: var(--burgundy); color: var(--cream); }
+.choice input:checked + span small { color: var(--cream-deep); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.hint { font-size: 13px; color: var(--ink-soft); }
+.stepper { display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 3px; background: #FBF9F3; width: max-content; }
+.stepper button { font: inherit; font-size: 20px; width: 44px; height: 44px; border: 0; background: transparent; color: var(--burgundy); cursor: pointer; }
+.stepper button:disabled { color: var(--rule); cursor: default; }
+.stepper output { min-width: 40px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 500; }
+.submit {
+  font: inherit; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; font-size: 14px;
+  background: var(--red); color: var(--cream); border: 0; border-radius: 3px;
+  padding: 16px 20px; cursor: pointer; transition: background .15s;
+}
+.submit:hover { background: var(--burgundy); }
+.submit:disabled { opacity: .6; cursor: progress; }
+.status { font-size: 14px; min-height: 1.2em; text-align: center; color: var(--ink-soft); }
+.status.err { color: var(--red); }
+
+.seats-note { margin: 0; text-align: center; font-size: 15px; line-height: 1.5; color: var(--burgundy); border: 1px solid var(--burgundy); border-radius: 3px; padding: 12px 16px; background: #FBF9F3; text-wrap: balance; }
 .seats-note strong { letter-spacing: .14em; text-transform: uppercase; font-size: 12px; margin-right: 4px; }
 .seats-note b { font-weight: 600; }
-.form-box { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
-.form-box iframe { display: block; width: 100%; min-height: 1100px; border: 0; }
-.fallback { text-align: center; font-size: 14px; color: var(--ink-soft); margin: 0; }
-.fallback a { color: var(--burgundy); font-weight: 500; }
-a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.field-help { margin: -2px 0 0; font-size: 14px; color: var(--ink-soft); }
+.check { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--rule); border-radius: 3px; background: #FBF9F3; cursor: pointer; position: relative; }
+.check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.check .box { flex: none; width: 24px; height: 24px; border: 1.5px solid var(--burgundy); border-radius: 3px; display: grid; place-items: center; background: #fff; transition: background .15s; }
+.check .box::after { content: ""; width: 7px; height: 13px; border: solid var(--cream); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg) translate(-1px, -1px); opacity: 0; }
+.check input:checked + .box { background: var(--burgundy); }
+.check input:checked + .box::after { opacity: 1; }
+.check input:focus-visible + .box { outline: 2px solid var(--gold); outline-offset: 2px; }
+.check strong { color: var(--red); font-weight: 600; }
+.notice { background: var(--cream-deep); border-radius: 3px; padding: 14px 16px; font-size: 14px; }
+
+.thanks { text-align: center; display: grid; gap: 10px; justify-items: center; }
+.thanks .script { font-family: var(--font-script); font-size: 54px; line-height: 1; color: var(--red); }
+.thanks p { margin: 0; max-width: 36ch; }
+.linkbtn { font: inherit; background: none; border: 0; color: var(--burgundy); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 4px; }
+
+.coming { display: grid; gap: 12px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.coming-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.coming h2 { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 22px; }
+.tally { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+.tally b { color: var(--red); font-weight: 600; }
+.guests { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 6px 18px; }
+.guests li { display: flex; justify-content: space-between; gap: 8px; padding-block: 6px; border-bottom: 1px dotted var(--rule); font-size: 15px; min-width: 0; }
+.guests li .nm { overflow-wrap: anywhere; }
+.guests li .ps { color: var(--ink-soft); font-variant-numeric: tabular-nums; font-size: 13px; white-space: nowrap; }
+.empty { font-size: 14px; color: var(--ink-soft); margin: 0; }
+
+.host { display: grid; gap: 12px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.host h2 { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 22px; }
+.host .tag { font-family: var(--font-body); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--cream); background: var(--forest); padding: 3px 8px; border-radius: 2px; vertical-align: middle; margin-left: 8px; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 520px; }
+th { text-align: left; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--ink); }
+td { padding: 8px; border-bottom: 1px dotted var(--rule); vertical-align: top; }
+td.num { font-variant-numeric: tabular-nums; text-align: center; }
+.pill { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.yes { background: var(--forest); color: var(--cream); }
+.pill.no { background: var(--cream-deep); color: var(--ink-soft); }
+
 @media (max-width: 860px) {
   .wrap { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 20px 40px; }
   .cover { position: static; max-width: 520px; margin: 0 auto; width: 100%; }
@@ -106,21 +189,23 @@ a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .reply-link a { display: inline-block; color: var(--cream); background: var(--red); text-decoration: none; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; font-size: 13px; padding: 13px 26px; border-radius: 3px; }
   .card { border-radius: 999px 999px 6px 6px / 180px 180px 6px 6px; padding-top: 56px; }
 }
-@media (max-width: 400px) {
-  .countdown { gap: 6px; } .countdown div { min-width: 0; flex: 1; } .countdown b { font-size: 22px; }
+@media (max-width: 440px) {
+  .row2 { grid-template-columns: 1fr; }
   .when { font-size: 15px; gap: 10px; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
 </style>
 </head>
 <body>
 <main class="wrap">
   <section class="cover" aria-label="Invitation">
-    <img src="invite.jpg" width="900" height="1268" alt="You're invited to Markha Christmas Dinner Party, December 19 at 7:00 pm.">
-    <p class="reply-link"><a href="#rsvp">Mag-RSVP dito</a></p>
+    <img src="invite.jpg" width="900" height="1268" alt="Invitation: You're invited to Markha Christmas Dinner Party, December 19 at 7:00 pm.">
+    <p class="cover-note">Markha Christmas &amp; Year End Party</p>
+    <p class="reply-link"><a href="#reply">Mag-RSVP dito</a></p>
   </section>
 
-  <section class="card" id="rsvp" aria-labelledby="rsvp-title">
+  <section class="card" id="reply" aria-labelledby="rsvp-title">
     <header class="head">
       <span class="eyebrow">RSVP closes by Nov 14</span>
       <div class="countdown" id="countdown" role="timer" aria-label="Time left to RSVP">
@@ -136,34 +221,161 @@ a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
     <p class="seats-note"><strong>Paalala:</strong> Please RSVP before <b>November 14</b>. We will be implementing <b>LIMITED SEATS</b> only, so please reserve your seats as soon as possible. Thank you!</p>
 
-    <div class="form-box">
-      <iframe id="JotFormIFrame-263073317220043" title="Markha Christmas RSVP form" src="https://form.jotform.com/263073317220043" allow="geolocation; microphone; camera; fullscreen" scrolling="no"></iframe>
+    <div id="notice" class="notice" hidden></div>
+
+    <form id="rsvp-form" novalidate>
+      <div class="field">
+        <label class="lbl" for="f-name">Buong pangalan</label>
+        <input id="f-name" type="text" autocomplete="name" maxlength="80" placeholder="hal. Maria Santos" required>
+      </div>
+
+      <fieldset>
+        <legend>Makakapunta ka ba?</legend>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="attending" id="f-yes" value="yes"><span><strong>Darating ako</strong><small>Count me in!</small></span></label>
+          <label class="choice"><input type="radio" name="attending" id="f-no" value="no"><span><strong>Hindi makakarating</strong><small>Sorry, next time na lang</small></span></label>
+        </div>
+      </fieldset>
+
+      <div class="field" id="party-field">
+        <label class="lbl" for="f-party">Ilan kayong darating?</label>
+        <select id="f-party">
+          <option value="1">Ako lang</option>
+          <option value="2">Ako + 1</option>
+          <option value="3">Ako + 2</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="f-contact">Mobile o email</label>
+        <input id="f-contact" type="text" maxlength="80" autocomplete="tel" placeholder="Para ma-contact ka ng host">
+      </div>
+
+      <fieldset>
+        <legend>Poll</legend>
+        <label class="check" for="f-monito">
+          <input type="checkbox" id="f-monito">
+          <span class="box" aria-hidden="true"></span>
+          <span>Would you like to have <strong>Monito Monita</strong>?</span>
+        </label>
+      </fieldset>
+
+      <div class="field">
+        <label class="lbl" for="f-msg">Message para sa host</label>
+        <p class="field-help" id="msg-help">Help us make this party one to remember! Share your ideas for the program, food you'd love to see on the table, raffle and giveaway suggestions, or fun prizes for the games.</p>
+        <textarea id="f-msg" maxlength="600" placeholder="Optional lang" aria-describedby="msg-help"></textarea>
+      </div>
+
+      <p class="hint">Ang reply mo ay makikita lang ng host.</p>
+
+      <button class="submit" id="f-submit" type="submit">I-reserve ang upuan ko</button>
+      <p class="status" id="status" role="status"></p>
+    </form>
+
+    <div class="thanks" id="thanks" hidden>
+      <span class="script" id="thanks-title">Salamat</span>
+      <p id="thanks-text"></p>
+      <button class="linkbtn" id="edit-btn" type="button">Baguhin ang reply ko</button>
     </div>
-    <p class="fallback">Hindi lumalabas ang form? <a href="https://form.jotform.com/263073317220043" target="_blank" rel="noopener">Buksan ang RSVP form dito</a></p>
+
   </section>
 </main>
-
-<script src="https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js"></script>
 <script>
-  try { window.jotformEmbedHandler("iframe[id='JotFormIFrame-263073317220043']", "https://form.jotform.com/"); } catch (e) {}
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const form = $("rsvp-form"), statusEl = $("status"), notice = $("notice");
+  const MAX_SEATS = 3;
+  const KEY = "markha-rsvp-reply";
+  let saving = false;
 
-  (function () {
-    // RSVP closes at the end of Nov 14, 2026, Manila time
-    var DEADLINE = new Date("2026-11-14T23:59:59+08:00").getTime();
-    var $ = function (id) { return document.getElementById(id); };
-    var pad = function (n) { return String(n).padStart(2, "0"); };
-    function tick() {
-      var left = DEADLINE - Date.now();
-      if (left <= 0) { $("countdown").hidden = true; $("cd-closed").hidden = false; return false; }
-      var t = Math.floor(left / 1000);
-      $("cd-d").textContent = Math.floor(t / 86400);
-      $("cd-h").textContent = pad(Math.floor(t / 3600) % 24);
-      $("cd-m").textContent = pad(Math.floor(t / 60) % 60);
-      $("cd-s").textContent = pad(t % 60);
-      return true;
+  // RSVP closes at the end of Nov 14, 2026, Manila time
+  const DEADLINE = new Date("2026-11-14T23:59:59+08:00").getTime();
+  const pad = (n) => String(n).padStart(2, "0");
+  function tick() {
+    const left = DEADLINE - Date.now();
+    if (left <= 0) { $("countdown").hidden = true; $("cd-closed").hidden = false; return false; }
+    const t = Math.floor(left / 1000);
+    $("cd-d").textContent = Math.floor(t / 86400);
+    $("cd-h").textContent = pad(Math.floor(t / 3600) % 24);
+    $("cd-m").textContent = pad(Math.floor(t / 60) % 60);
+    $("cd-s").textContent = pad(t % 60);
+    return true;
+  }
+  if (tick()) { const iv = setInterval(() => { if (!tick()) clearInterval(iv); }, 1000); }
+
+  function newId() {
+    try { return crypto.randomUUID(); } catch (_) { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+  }
+  function loadSaved() { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (_) { return null; } }
+  function saveLocal(r) { try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (_) {} }
+
+  function getParty() { return Math.max(1, Math.min(MAX_SEATS, Number($("f-party").value) || 1)); }
+  function attendingValue() {
+    const c = form.querySelector('input[name="attending"]:checked');
+    return c ? c.value : null;
+  }
+  function syncParty() { $("party-field").hidden = attendingValue() === "no"; }
+  form.addEventListener("change", syncParty);
+
+  function setStatus(text, err) { statusEl.textContent = text || ""; statusEl.classList.toggle("err", !!err); }
+
+  function showThanks(r) {
+    form.hidden = true;
+    $("thanks").hidden = false;
+    if (r.attending === "yes") {
+      $("thanks-title").textContent = "Kita-kits!";
+      $("thanks-text").textContent = r.name + ", naka-reserve na ang " + r.partySize + " upuan para sa'yo sa December 19, 7:00 pm. See you!";
+    } else {
+      $("thanks-title").textContent = "Mami-miss ka namin";
+      $("thanks-text").textContent = "Salamat sa pag-inform, " + r.name + ". Sana makasama ka namin next time!";
     }
-    if (tick()) { var iv = setInterval(function () { if (!tick()) clearInterval(iv); }, 1000); }
-  })();
+  }
+  $("edit-btn").addEventListener("click", () => { $("thanks").hidden = true; form.hidden = false; $("f-name").focus(); });
+
+  function fillForm(r) {
+    $("f-name").value = r.name || "";
+    if (r.attending) $(r.attending === "yes" ? "f-yes" : "f-no").checked = true;
+    $("f-party").value = String(r.partySize || 1);
+    $("f-monito").checked = !!r.monito;
+    $("f-contact").value = r.contact || "";
+    $("f-msg").value = r.message || "";
+    syncParty();
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (saving) return;
+    const name = $("f-name").value.trim();
+    const attending = attendingValue();
+    if (!name) { setStatus("Pakilagay ang pangalan mo para alam ng host kung sino ka.", true); $("f-name").focus(); return; }
+    if (!attending) { setStatus("Pumili muna kung makakapunta ka o hindi.", true); return; }
+    const prev = loadSaved();
+    const reply = {
+      id: (prev && prev.id) || newId(),
+      name,
+      attending,
+      partySize: attending === "yes" ? getParty() : 0,
+      monito: $("f-monito").checked,
+      contact: $("f-contact").value.trim(),
+      message: $("f-msg").value.trim()
+    };
+    saving = true; $("f-submit").disabled = true; setStatus("Sine-save ang reply mo…");
+    try {
+      const res = await fetch("/api/rsvp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reply) });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      saveLocal(reply);
+      setStatus("");
+      showThanks(reply);
+    } catch (err) {
+      setStatus("Hindi na-save ang reply mo. I-check ang internet mo at pindutin ulit ang button.", true);
+    } finally {
+      saving = false; $("f-submit").disabled = false;
+    }
+  });
+
+  const saved = loadSaved();
+  if (saved && saved.name) { fillForm(saved); showThanks(saved); }
+})();
 </script>
 </body>
 </html>
