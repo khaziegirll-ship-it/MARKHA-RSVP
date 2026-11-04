@@ -117,6 +117,31 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
 .empty { color: var(--ink-soft); font-size: 14px; margin: 0; }
 
 @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tile.lead { grid-column: 1 / -1; } }
+
+/* Guest checklist */
+.cl-final { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 18px; align-items: center; background: var(--burgundy); color: var(--cream); border-radius: 6px; padding: 14px 18px; margin-bottom: 16px; }
+.cl-final .big { font-family: var(--font-display); font-size: 46px; line-height: 1; font-variant-numeric: tabular-nums; grid-row: span 2; }
+.cl-final .lbl { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #E6D7C3; }
+.cl-final .sub { font-size: 14px; color: #F2EEE2; }
+.cl-final .sub b { font-variant-numeric: tabular-nums; }
+.cl-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; align-items: start; }
+.cl-group { border: 1px solid var(--rule); border-radius: 6px; background: #fff; min-width: 0; }
+.cl-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--rule); background: var(--cream); border-radius: 6px 6px 0 0; }
+.cl-head h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 17px; }
+.cl-head .note { font-size: 12px; color: var(--ink-soft); font-weight: 400; margin-left: 6px; font-family: var(--font-body); }
+.cl-head .cnt { font-size: 13px; color: var(--ok); font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cl-list { list-style: none; margin: 0; padding: 4px 0; }
+.cl-row { display: grid; grid-template-columns: 26px 28px minmax(0, 1fr); align-items: center; gap: 4px; padding: 2px 12px 2px 8px; }
+.cl-row .no { font-size: 13px; color: var(--ink-soft); text-align: right; font-variant-numeric: tabular-nums; padding-right: 2px; }
+.cl-row input[type=checkbox] { width: 20px; height: 20px; margin: 0 auto; accent-color: var(--ok); cursor: pointer; }
+.cl-row input[type=text] { font: inherit; font-size: 16px; width: 100%; min-width: 0; border: 0; border-bottom: 1px solid var(--rule); background: transparent; padding: 6px 4px; color: var(--ink); border-radius: 0; }
+.cl-row input[type=text]::placeholder { color: #B9AE9C; }
+.cl-row input[type=text]:focus-visible { outline: none; border-bottom-color: var(--gold); background: #FFFBEF; }
+.cl-row.on input[type=text] { color: var(--ok); font-weight: 600; }
+.cl-add { font: inherit; font-size: 13px; color: var(--burgundy); background: none; border: 0; padding: 8px 12px 10px; cursor: pointer; }
+.cl-add:hover { text-decoration: underline; }
+.cl-save.err { color: var(--bad); }
+.cl-save.ok { color: var(--ok); }
 </style>
 </head>
 <body>
@@ -178,6 +203,17 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
       </section>
 
       <p class="panel over" id="over" hidden></p>
+
+      <section class="panel" id="cl-panel" aria-labelledby="cl-title">
+        <div class="panel-head"><h2 id="cl-title">Guest checklist</h2><span class="muted cl-save" id="cl-save" role="status">Loading…</span></div>
+        <div class="cl-final" aria-live="polite">
+          <span class="big" id="cl-checked">0</span>
+          <span class="lbl">Final count · naka-check</span>
+          <span class="sub"><b id="cl-named">0</b> pangalan sa listahan · <b id="cl-blank">0</b> blanko</span>
+        </div>
+        <div class="cl-groups" id="cl-groups"></div>
+        <p class="muted" style="margin: 12px 0 0">I-check ang pangalan kapag confirmed. I-type ang pangalan sa blankong linya. Automatic na nase-save sa database.</p>
+      </section>
       <section class="panel" aria-labelledby="coming-title">
         <div class="panel-head"><h2 id="coming-title">Sino ang darating</h2><span class="muted" id="coming-count"></span></div>
         <ul class="guests" id="guests"></ul>
@@ -267,6 +303,7 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
       $("dash").hidden = false;
       $("band-actions").hidden = false;
       render();
+      loadChecklist();
     } catch (e) {
       setLogin("Couldn't load replies. Check your connection and try again.", true);
       showLogin();
@@ -394,6 +431,97 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
     if (!pass) { setLogin("Enter the admin password.", true); return; }
     load();
   });
+  // ---- Guest checklist (saved in the database via /api/checklist) ----
+  let cl = null, clTimer = null, clSaving = false, clDirty = false, clQueued = false;
+  function clStatus(t, cls) { const el = $("cl-save"); el.textContent = t; el.className = "muted cl-save" + (cls ? " " + cls : ""); }
+
+  async function loadChecklist() {
+    if (clDirty || clSaving) return; // don't overwrite edits that haven't saved yet
+    clStatus("Loading…");
+    try {
+      const res = await fetch("/api/checklist", { headers: { "x-admin-password": pass }, cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      cl = await res.json();
+      renderChecklist();
+      clStatus(cl.updatedAt ? "Saved · " + fmt(cl.updatedAt) : "Bagong listahan", "ok");
+    } catch (e) {
+      clStatus("Hindi ma-load ang checklist. Pindutin ang Refresh.", "err");
+    }
+  }
+
+  function clCounts() {
+    let checked = 0, named = 0, blank = 0;
+    cl.groups.forEach((grp, gi) => {
+      let gc = 0, gn = 0;
+      grp.items.forEach((it) => {
+        const has = it.name.trim() !== "";
+        if (has) { gn++; if (it.checked) gc++; } else blank++;
+      });
+      checked += gc; named += gn;
+      const el = document.getElementById("cl-cnt-" + gi);
+      if (el) el.textContent = gc + " / " + gn + " ✓";
+    });
+    $("cl-checked").textContent = checked;
+    $("cl-named").textContent = named;
+    $("cl-blank").textContent = blank;
+  }
+
+  function clRow(list, grp, gi, ii) {
+    const it = grp.items[ii];
+    const li = document.createElement("li"); li.className = "cl-row" + (it.checked && it.name.trim() ? " on" : "");
+    const no = document.createElement("span"); no.className = "no"; no.textContent = (ii + 1) + ".";
+    const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = it.checked;
+    const tx = document.createElement("input"); tx.type = "text"; tx.value = it.name; tx.maxLength = 80; tx.placeholder = "I-type ang pangalan";
+    cb.setAttribute("aria-label", "Check " + (it.name || grp.name + " #" + (ii + 1)));
+    tx.setAttribute("aria-label", grp.name + " #" + (ii + 1) + " name");
+    cb.addEventListener("change", () => { it.checked = cb.checked; li.classList.toggle("on", it.checked && it.name.trim() !== ""); clChanged(150); });
+    tx.addEventListener("input", () => { it.name = tx.value; li.classList.toggle("on", it.checked && it.name.trim() !== ""); clChanged(700); });
+    tx.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); const nxt = li.nextElementSibling && li.nextElementSibling.querySelector("input[type=text]"); if (nxt) nxt.focus(); } });
+    li.append(no, cb, tx); list.append(li);
+    return tx;
+  }
+
+  function renderChecklist() {
+    const wrap = $("cl-groups"); wrap.textContent = "";
+    cl.groups.forEach((grp, gi) => {
+      const box = document.createElement("div"); box.className = "cl-group";
+      const head = document.createElement("div"); head.className = "cl-head";
+      const h = document.createElement("h3"); h.textContent = grp.name;
+      if (grp.note) { const n = document.createElement("span"); n.className = "note"; n.textContent = grp.note; h.append(n); }
+      const cnt = document.createElement("span"); cnt.className = "cnt"; cnt.id = "cl-cnt-" + gi;
+      head.append(h, cnt);
+      const list = document.createElement("ol"); list.className = "cl-list";
+      grp.items.forEach((_, ii) => clRow(list, grp, gi, ii));
+      const add = document.createElement("button"); add.type = "button"; add.className = "cl-add"; add.textContent = "+ Dagdag na blanko";
+      add.addEventListener("click", () => { grp.items.push({ name: "", checked: false }); clRow(list, grp, gi, grp.items.length - 1).focus(); clChanged(150); });
+      box.append(head, list, add); wrap.append(box);
+    });
+    clCounts();
+  }
+
+  function clChanged(delay) {
+    clDirty = true; clCounts(); clStatus("May hindi pa nase-save…");
+    clearTimeout(clTimer); clTimer = setTimeout(clSave, delay);
+  }
+
+  async function clSave() {
+    if (clSaving) { clQueued = true; return; }
+    clSaving = true; clDirty = false; clStatus("Sine-save…");
+    try {
+      const res = await fetch("/api/checklist", { method: "PUT", headers: { "Content-Type": "application/json", "x-admin-password": pass }, body: JSON.stringify({ groups: cl.groups }) });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const b = await res.json(); cl.updatedAt = b.updatedAt;
+      if (!clDirty) clStatus("Saved · " + fmt(b.updatedAt), "ok");
+    } catch (e) {
+      clDirty = true; clStatus("Hindi na-save. Susubukan ulit…", "err");
+      clearTimeout(clTimer); clTimer = setTimeout(clSave, 4000);
+    } finally {
+      clSaving = false;
+      if (clQueued) { clQueued = false; clSave(); }
+    }
+  }
+  window.addEventListener("beforeunload", (e) => { if (clDirty || clSaving) { e.preventDefault(); e.returnValue = ""; } });
+
   $("refresh").addEventListener("click", () => { checkSetup(); load(); });
   $("export").addEventListener("click", exportCsv);
   $("logout").addEventListener("click", () => { pass = ""; all = []; try { sessionStorage.removeItem(KEY); } catch (_) {} $("f-pass").value = ""; showLogin(); });
