@@ -81,7 +81,7 @@ input[type=password], input[type=search] { font: inherit; color: var(--ink); bac
 .status { min-height: 1.2em; margin: 0; font-size: 14px; color: var(--ink-soft); }
 .status.err { color: var(--bad); }
 
-.tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
 .tile { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
 .tile .label { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
 .tile .num { font-family: var(--font-display); font-size: 34px; line-height: 1.1; font-variant-numeric: tabular-nums; }
@@ -96,13 +96,12 @@ input[type=password], input[type=search] { font: inherit; color: var(--ink); bac
 .guests .guest-of .nm { padding-left: 14px; position: relative; }
 .guests .guest-of .nm::before { content: "↳"; position: absolute; left: 0; color: var(--gold); }
 .guests .guest-of .ps { white-space: normal; text-align: right; overflow-wrap: anywhere; }
-td.gst { min-width: 140px; }
-td.gst span { display: block; }
+td.gst { min-width: 130px; }
 
 .tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .tools select { font: inherit; border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; background: #fff; min-height: 40px; }
 .tablewrap { overflow-x: auto; margin-top: 12px; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 900px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 980px; }
 th { text-align: left; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; padding: 8px; border-bottom: 1px solid var(--ink); white-space: nowrap; }
 td { padding: 9px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
 td.num { text-align: center; font-variant-numeric: tabular-nums; }
@@ -169,6 +168,7 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
     <div style="display: grid; gap: 20px">
       <section class="tiles" aria-label="Summary">
         <div class="tile lead"><span class="label">Seats reserved</span><span class="num" id="t-seats">0</span><span class="note" id="t-seats-note">including guests</span></div>
+        <div class="tile"><span class="label">Additional guests</span><span class="num" id="t-guests">0</span><span class="note" id="t-guests-note">0 named</span></div>
         <div class="tile"><span class="label">Darating</span><span class="num" id="t-yes">0</span><span class="note">replies</span></div>
         <div class="tile"><span class="label">Hindi makakapunta</span><span class="num" id="t-no">0</span><span class="note">replies</span></div>
         <div class="tile"><span class="label">Monito Monita</span><span class="num" id="t-monito">0</span><span class="note" id="t-monito-note">Yes · 0 No</span></div>
@@ -196,7 +196,7 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
         </div>
         <div class="tablewrap">
           <table>
-            <thead><tr><th>Bisita</th><th>Sagot</th><th>Upuan</th><th>Mga kasama</th><th>Monito Monita</th><th>Contact</th><th>Message</th><th>Updated</th><th><span class="muted">Action</span></th></tr></thead>
+            <thead><tr><th>Bisita</th><th>Sagot</th><th>Upuan</th><th>Guest 1</th><th>Guest 2</th><th>Monito Monita</th><th>Contact</th><th>Message</th><th>Updated</th><th><span class="muted">Action</span></th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
@@ -284,6 +284,10 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
     $("t-monito").textContent = mYes;
     $("t-monito-note").textContent = "Yes · " + mNo + " No";
     $("t-total").textContent = all.length;
+    const extra = yes.reduce((s, r) => s + Math.max(0, (Number(r.partySize) || 1) - 1), 0);
+    const named = yes.reduce((s, r) => s + guestsOf(r).length, 0);
+    $("t-guests").textContent = extra;
+    $("t-guests-note").textContent = named === extra ? "all named" : named + " named · " + (extra - named) + " walang pangalan";
     const latest = all.map((r) => r.updatedAt || "").sort().pop();
     $("t-updated").textContent = latest ? "Latest " + fmt(latest) : "No replies yet";
 
@@ -318,7 +322,7 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
     const tb = $("rows"); tb.textContent = "";
     if (!rows.length) {
       const tr = document.createElement("tr"); const td = document.createElement("td");
-      td.colSpan = 9; td.className = "empty"; td.textContent = all.length ? "Walang tumugma sa search o filter." : "Lalabas dito ang mga reply habang sumasagot ang mga bisita.";
+      td.colSpan = 10; td.className = "empty"; td.textContent = all.length ? "Walang tumugma sa search o filter." : "Lalabas dito ang mga reply habang sumasagot ang mga bisita.";
       tr.append(td); tb.append(tr); return;
     }
     rows.forEach((r) => {
@@ -329,9 +333,9 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
       p.className = "pill " + (r.attending === "yes" ? "yes" : "no"); p.textContent = r.attending === "yes" ? "Darating" : "Hindi darating";
       s.append(p); tr.append(s);
       td(r.attending === "yes" ? String(Number(r.partySize) || 1) : "–", "num");
-      const gc = td("", "gst"); const gl = guestsOf(r);
-      if (!gl.length) gc.textContent = "–";
-      gl.forEach((g) => { const sp = document.createElement("span"); sp.textContent = g; gc.append(sp); });
+      const gl = guestsOf(r);
+      td(gl[0] || "–", "gst");
+      td(gl[1] || "–", "gst");
       td(isYes(r.monito) ? "Yes" : isNo(r.monito) ? "No" : "–", "num");
       td(r.contact || "");
       td(r.message || "", "msg");
