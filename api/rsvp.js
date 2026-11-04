@@ -1,5 +1,5 @@
 // POST /api/rsvp — saves or updates one guest's reply.
-const { redis } = require("./_store");
+const { redis, KEY } = require("./_store");
 
 const clip = (v, n) => String(v == null ? "" : v).trim().slice(0, n);
 
@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
   };
 
   try {
-    await redis(["HSET", "markha:rsvps", id, JSON.stringify(reply)]);
+    await redis(["HSET", KEY, id, JSON.stringify(reply)]);
     return res.status(200).json({ ok: true });
   } catch (e) {
     return res.status(e.code === "NO_STORE" ? 503 : 500).json({ error: e.message });

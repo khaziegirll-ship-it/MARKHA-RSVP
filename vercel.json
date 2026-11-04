@@ -1,6 +1,9 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/host", "destination": "/admin", "permanent": false }
+  ],
   "headers": [
-    { "source": "/host", "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }] }
+    { "source": "/admin", "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }, { "key": "Cache-Control", "value": "no-store" }] }
   ]
 }

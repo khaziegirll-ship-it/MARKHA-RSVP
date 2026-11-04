@@ -363,6 +363,7 @@ html { scroll-behavior: smooth; }
     saving = true; $("f-submit").disabled = true; setStatus("Sine-save ang reply mo…");
     try {
       const res = await fetch("/api/rsvp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(reply) });
+      if (res.status === 503) { setStatus("Hindi pa naka-setup ang RSVP. Pakisabi sa host at subukan ulit mamaya.", true); return; }
       if (!res.ok) throw new Error("HTTP " + res.status);
       saveLocal(reply);
       setStatus("");

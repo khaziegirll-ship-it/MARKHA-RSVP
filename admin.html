@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Markha RSVP – Admin</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#6E0B14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%236E0B14'/%3E%3Ctext x='50' y='68' font-size='54' text-anchor='middle' fill='%23F2EEE2' font-family='Georgia,serif'%3EM%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=Jost:wght@400;500;600&family=Pinyon+Script&display=swap">
+<style>
+/* Layout: burgundy header band, then a single column: setup check, stat tiles, guest list, full reply table. */
+:root {
+  --bg: #F4F0E6;
+  --paper: #FFFDF8;
+  --cream: #F2EEE2;
+  --ink: #2C2826;
+  --ink-soft: #6A5F58;
+  --rule: #DDD2BE;
+  --burgundy: #6E0B14;
+  --red: #A8141C;
+  --forest: #1F4A3A;
+  --gold: #B8913F;
+  --ok: #1F6B45;
+  --warn: #9A5B00;
+  --bad: #B3261E;
+  --font-script: "Pinyon Script", "Snell Roundhand", cursive;
+  --font-display: "Bodoni Moda", "Didot", Georgia, serif;
+  --font-body: "Jost", "Avenir Next", "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.band { background: var(--burgundy); color: var(--cream); padding-top: env(safe-area-inset-top, 0px); }
+.band-inner, .page {
+  max-width: 1100px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.band-inner { padding-block: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: 12px; }
+.brand .script { font-family: var(--font-script); font-size: 42px; line-height: 1; }
+.brand .sub { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; opacity: .85; }
+.band-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.page { padding-block: 24px 48px; display: grid; gap: 20px; }
+
+.btn { font: inherit; font-weight: 500; font-size: 14px; border-radius: 4px; padding: 9px 14px; cursor: pointer; border: 1px solid transparent; min-height: 40px; }
+.btn-light { background: transparent; color: var(--cream); border-color: rgba(242,238,226,.5); }
+.btn-light:hover { background: rgba(242,238,226,.12); }
+.btn-primary { background: var(--red); color: var(--cream); }
+.btn-primary:hover { background: var(--burgundy); }
+.btn-ghost { background: var(--paper); color: var(--burgundy); border-color: var(--rule); }
+.btn-ghost:hover { border-color: var(--burgundy); }
+.btn-danger { background: var(--bad); color: #fff; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.panel { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 18px 20px; min-width: 0; }
+.panel h2 { margin: 0 0 12px; font-family: var(--font-display); font-weight: 500; font-size: 21px; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.panel-head h2 { margin: 0; }
+.muted { color: var(--ink-soft); font-size: 13px; }
+
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.checks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; }
+.dot { width: 18px; height: 18px; border-radius: 50%; margin-top: 2px; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 600; }
+.dot.ok { background: var(--ok); }
+.dot.bad { background: var(--bad); }
+.dot.wait { background: var(--rule); }
+.checks b { font-weight: 600; }
+.fix { margin: 4px 0 0; padding-left: 18px; font-size: 14px; color: var(--ink-soft); }
+.fix li { display: list-item; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; background: var(--cream); padding: 1px 5px; border-radius: 3px; }
+
+.login { display: grid; gap: 10px; max-width: 420px; }
+.login label { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; }
+.login .row { display: flex; gap: 8px; flex-wrap: wrap; }
+input[type=password], input[type=search] { font: inherit; color: var(--ink); background: #fff; border: 1px solid var(--rule); border-radius: 4px; padding: 9px 12px; min-height: 40px; flex: 1 1 200px; min-width: 0; }
+.status { min-height: 1.2em; margin: 0; font-size: 14px; color: var(--ink-soft); }
+.status.err { color: var(--bad); }
+
+.tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.tile { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
+.tile .label { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+.tile .num { font-family: var(--font-display); font-size: 34px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tile .note { font-size: 12px; color: var(--ink-soft); }
+.tile.lead { background: var(--burgundy); border-color: var(--burgundy); color: var(--cream); }
+.tile.lead .label, .tile.lead .note { color: #E6D7C3; }
+
+.guests { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 4px 20px; }
+.guests li { display: flex; justify-content: space-between; gap: 8px; padding-block: 7px; border-bottom: 1px dotted var(--rule); min-width: 0; }
+.guests .nm { overflow-wrap: anywhere; }
+.guests .ps { color: var(--ink-soft); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tools select { font: inherit; border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; background: #fff; min-height: 40px; }
+.tablewrap { overflow-x: auto; margin-top: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 760px; }
+th { text-align: left; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; padding: 8px; border-bottom: 1px solid var(--ink); white-space: nowrap; }
+td { padding: 9px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+td.num { text-align: center; font-variant-numeric: tabular-nums; }
+td.msg { max-width: 320px; white-space: pre-wrap; overflow-wrap: anywhere; }
+td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
+.pill { display: inline-block; font-size: 12px; padding: 2px 9px; border-radius: 999px; white-space: nowrap; font-weight: 500; }
+.pill.yes { background: #DDEEE4; color: var(--ok); }
+.pill.no { background: #F1E7E2; color: var(--ink-soft); }
+.del { font: inherit; font-size: 13px; background: none; border: 0; color: var(--bad); cursor: pointer; padding: 6px; }
+.del.confirm { background: var(--bad); color: #fff; border-radius: 3px; }
+.empty { color: var(--ink-soft); font-size: 14px; margin: 0; }
+
+@media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tile.lead { grid-column: 1 / -1; } }
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="band-inner">
+    <div class="brand"><span class="script">Markha</span><span class="sub">RSVP admin · Dec 19, 7:00 pm</span></div>
+    <div class="band-actions" id="band-actions" hidden>
+      <button class="btn btn-light" id="refresh" type="button">Refresh</button>
+      <button class="btn btn-light" id="export" type="button">Download CSV</button>
+      <button class="btn btn-light" id="logout" type="button">Log out</button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <section class="panel" id="setup" aria-labelledby="setup-title">
+    <div class="panel-head">
+      <h2 id="setup-title">Setup check</h2>
+      <span class="muted" id="setup-summary">Checking…</span>
+    </div>
+    <ul class="checks">
+      <li><span class="dot wait" id="c-store-dot"></span><div><b>Database connected</b><div class="muted" id="c-store-text">Checking…</div>
+        <ol class="fix" id="c-store-fix" hidden>
+          <li>In Vercel, open this project and go to the <b>Storage</b> tab.</li>
+          <li>Click <b>Create Database</b> → <b>Upstash for Redis</b> → free plan, and <b>connect it to this project</b> (all environments).</li>
+          <li>Go to <b>Deployments</b> → ⋯ on the latest one → <b>Redeploy</b>.</li>
+        </ol></div></li>
+      <li><span class="dot wait" id="c-reach-dot"></span><div><b>Database responding</b><div class="muted" id="c-reach-text">Checking…</div></div></li>
+      <li><span class="dot wait" id="c-pass-dot"></span><div><b>Admin password set</b><div class="muted" id="c-pass-text">Checking…</div>
+        <ol class="fix" id="c-pass-fix" hidden>
+          <li>In Vercel, go to <b>Settings</b> → <b>Environment Variables</b>.</li>
+          <li>Add <code>ADMIN_PASSWORD</code> with a password only you know, for all environments.</li>
+          <li>Go to <b>Deployments</b> → ⋯ on the latest one → <b>Redeploy</b>.</li>
+        </ol></div></li>
+    </ul>
+  </section>
+
+  <section class="panel" id="login-panel" aria-labelledby="login-title">
+    <h2 id="login-title">Host login</h2>
+    <form class="login" id="login-form" novalidate>
+      <label for="f-pass">Admin password</label>
+      <div class="row">
+        <input id="f-pass" type="password" autocomplete="current-password" placeholder="Your ADMIN_PASSWORD">
+        <button class="btn btn-primary" type="submit">Open dashboard</button>
+      </div>
+      <p class="status" id="login-status" role="status"></p>
+    </form>
+  </section>
+
+  <div id="dash" hidden>
+    <div style="display: grid; gap: 20px">
+      <section class="tiles" aria-label="Summary">
+        <div class="tile lead"><span class="label">Seats reserved</span><span class="num" id="t-seats">0</span><span class="note" id="t-seats-note">including guests</span></div>
+        <div class="tile"><span class="label">Darating</span><span class="num" id="t-yes">0</span><span class="note">replies</span></div>
+        <div class="tile"><span class="label">Hindi makakapunta</span><span class="num" id="t-no">0</span><span class="note">replies</span></div>
+        <div class="tile"><span class="label">Monito Monita</span><span class="num" id="t-monito">0</span><span class="note" id="t-monito-note">Yes · 0 No</span></div>
+        <div class="tile"><span class="label">Total replies</span><span class="num" id="t-total">0</span><span class="note" id="t-updated">—</span></div>
+      </section>
+
+      <section class="panel" aria-labelledby="coming-title">
+        <div class="panel-head"><h2 id="coming-title">Sino ang darating</h2><span class="muted" id="coming-count"></span></div>
+        <ul class="guests" id="guests"></ul>
+        <p class="empty" id="guests-empty" hidden>Wala pang nag-confirm na darating.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="all-title">
+        <div class="panel-head">
+          <h2 id="all-title">Lahat ng reply</h2>
+          <div class="tools">
+            <input type="search" id="f-search" placeholder="Search name, contact or message" aria-label="Search replies">
+            <select id="f-filter" aria-label="Filter replies">
+              <option value="all">Lahat</option>
+              <option value="yes">Darating</option>
+              <option value="no">Hindi darating</option>
+              <option value="monito">Monito Monita: Yes</option>
+            </select>
+          </div>
+        </div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Bisita</th><th>Sagot</th><th>Upuan</th><th>Monito Monita</th><th>Contact</th><th>Message</th><th>Updated</th><th><span class="muted">Action</span></th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <p class="status" id="dash-status" role="status"></p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const KEY = "markha-admin-pass";
+  let pass = "";
+  let all = [];
+  let pendingDelete = null;
+  try { pass = sessionStorage.getItem(KEY) || ""; } catch (_) {}
+
+  const isYes = (v) => v === "yes" || v === true;
+  const isNo = (v) => v === "no" || v === false;
+  const fmt = (iso) => { try { return new Date(iso).toLocaleString("en-PH", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); } catch (_) { return ""; } };
+
+  function setDot(id, state) { const el = $(id); el.className = "dot " + state; el.textContent = state === "ok" ? "✓" : state === "bad" ? "!" : ""; }
+
+  async function checkSetup() {
+    try {
+      const res = await fetch("/api/status", { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const s = await res.json();
+      setDot("c-store-dot", s.storageConnected ? "ok" : "bad");
+      $("c-store-text").textContent = s.storageConnected ? "Upstash Redis is connected to this project." : "No database is connected yet, so replies can't be saved.";
+      $("c-store-fix").hidden = s.storageConnected;
+      setDot("c-reach-dot", s.storageReachable ? "ok" : s.storageConnected ? "bad" : "wait");
+      $("c-reach-text").textContent = s.storageReachable ? "Saving and reading replies works." : s.storageConnected ? "The database didn't answer: " + (s.storageError || "unknown error") + ". Check it in Vercel's Storage tab, then redeploy." : "Waiting for the database to be connected.";
+      setDot("c-pass-dot", s.adminPasswordSet ? "ok" : "bad");
+      $("c-pass-text").textContent = s.adminPasswordSet ? "ADMIN_PASSWORD is set." : "ADMIN_PASSWORD isn't set, so the dashboard can't open.";
+      $("c-pass-fix").hidden = s.adminPasswordSet;
+      const ready = s.storageReachable && s.adminPasswordSet;
+      $("setup-summary").textContent = ready ? "All set. Guests can reply." : "Needs attention: guests can't reply until this is fixed.";
+      $("setup-summary").style.color = ready ? "var(--ok)" : "var(--bad)";
+      return ready;
+    } catch (e) {
+      $("setup-summary").textContent = "Couldn't run the check. The /api functions may not be deployed. Make sure the api folder is in the GitHub repo and redeploy.";
+      $("setup-summary").style.color = "var(--bad)";
+      ["c-store-dot", "c-reach-dot", "c-pass-dot"].forEach((d) => setDot(d, "bad"));
+      return false;
+    }
+  }
+
+  function setLogin(t, err) { $("login-status").textContent = t || ""; $("login-status").classList.toggle("err", !!err); }
+
+  async function load() {
+    setLogin("Loading replies…");
+    try {
+      const res = await fetch("/api/rsvps", { headers: { "x-admin-password": pass }, cache: "no-store" });
+      if (res.status === 401) { setLogin("Wrong password. Try again.", true); showLogin(); return; }
+      if (res.status === 503) { const b = await res.json().catch(() => ({})); setLogin(b.error === "ADMIN_PASSWORD is not set" ? "ADMIN_PASSWORD isn't set in Vercel yet. See the setup check above." : "The database isn't connected yet. See the setup check above.", true); showLogin(); return; }
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      try { sessionStorage.setItem(KEY, pass); } catch (_) {}
+      all = Array.isArray(data.rsvps) ? data.rsvps : [];
+      setLogin("");
+      $("login-panel").hidden = true;
+      $("dash").hidden = false;
+      $("band-actions").hidden = false;
+      render();
+    } catch (e) {
+      setLogin("Couldn't load replies. Check your connection and try again.", true);
+      showLogin();
+    }
+  }
+  function showLogin() { $("login-panel").hidden = false; $("dash").hidden = true; $("band-actions").hidden = true; }
+
+  function render() {
+    const yes = all.filter((r) => r.attending === "yes");
+    const no = all.filter((r) => r.attending === "no");
+    const seats = yes.reduce((s, r) => s + (Number(r.partySize) || 1), 0);
+    const mYes = all.filter((r) => isYes(r.monito)).length;
+    const mNo = all.filter((r) => isNo(r.monito)).length;
+    $("t-seats").textContent = seats;
+    $("t-seats-note").textContent = yes.length + " households · including guests";
+    $("t-yes").textContent = yes.length;
+    $("t-no").textContent = no.length;
+    $("t-monito").textContent = mYes;
+    $("t-monito-note").textContent = "Yes · " + mNo + " No";
+    $("t-total").textContent = all.length;
+    const latest = all.map((r) => r.updatedAt || "").sort().pop();
+    $("t-updated").textContent = latest ? "Latest " + fmt(latest) : "No replies yet";
+
+    const list = $("guests"); list.textContent = "";
+    yes.slice().sort((a, b) => String(a.name).localeCompare(String(b.name))).forEach((r) => {
+      const li = document.createElement("li");
+      const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = r.name || "Bisita";
+      const ps = document.createElement("span"); ps.className = "ps";
+      const n = Number(r.partySize) || 1; ps.textContent = n === 1 ? "Ako lang" : "Ako + " + (n - 1);
+      li.append(nm, ps); list.append(li);
+    });
+    $("guests-empty").hidden = yes.length > 0;
+    $("coming-count").textContent = seats + " upuan";
+    renderTable();
+  }
+
+  function renderTable() {
+    const q = $("f-search").value.trim().toLowerCase();
+    const f = $("f-filter").value;
+    let rows = all.slice().sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+    if (f === "yes") rows = rows.filter((r) => r.attending === "yes");
+    if (f === "no") rows = rows.filter((r) => r.attending === "no");
+    if (f === "monito") rows = rows.filter((r) => isYes(r.monito));
+    if (q) rows = rows.filter((r) => [r.name, r.contact, r.message].some((v) => String(v || "").toLowerCase().includes(q)));
+
+    const tb = $("rows"); tb.textContent = "";
+    if (!rows.length) {
+      const tr = document.createElement("tr"); const td = document.createElement("td");
+      td.colSpan = 8; td.className = "empty"; td.textContent = all.length ? "Walang tumugma sa search o filter." : "Lalabas dito ang mga reply habang sumasagot ang mga bisita.";
+      tr.append(td); tb.append(tr); return;
+    }
+    rows.forEach((r) => {
+      const tr = document.createElement("tr");
+      const td = (text, cls) => { const c = document.createElement("td"); if (cls) c.className = cls; c.textContent = text; tr.append(c); return c; };
+      td(r.name || "Bisita");
+      const s = document.createElement("td"); const p = document.createElement("span");
+      p.className = "pill " + (r.attending === "yes" ? "yes" : "no"); p.textContent = r.attending === "yes" ? "Darating" : "Hindi darating";
+      s.append(p); tr.append(s);
+      td(r.attending === "yes" ? String(Number(r.partySize) || 1) : "–", "num");
+      td(isYes(r.monito) ? "Yes" : isNo(r.monito) ? "No" : "–", "num");
+      td(r.contact || "");
+      td(r.message || "", "msg");
+      td(r.updatedAt ? fmt(r.updatedAt) : "", "when");
+      const a = document.createElement("td");
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "del" + (pendingDelete === r.id ? " confirm" : "");
+      b.textContent = pendingDelete === r.id ? "Confirm delete" : "Delete";
+      b.setAttribute("aria-label", (pendingDelete === r.id ? "Confirm delete of " : "Delete reply from ") + (r.name || "guest"));
+      b.addEventListener("click", () => onDelete(r.id));
+      a.append(b); tr.append(a);
+      tb.append(tr);
+    });
+  }
+
+  async function onDelete(id) {
+    if (pendingDelete !== id) { pendingDelete = id; renderTable(); return; }
+    pendingDelete = null;
+    $("dash-status").textContent = "Deleting…";
+    try {
+      const res = await fetch("/api/rsvps?id=" + encodeURIComponent(id), { method: "DELETE", headers: { "x-admin-password": pass } });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      all = all.filter((r) => r.id !== id);
+      $("dash-status").textContent = "Reply deleted.";
+      render();
+    } catch (e) {
+      $("dash-status").textContent = "Couldn't delete that reply. Try again.";
+      renderTable();
+    }
+  }
+
+  function exportCsv() {
+    const head = ["Name", "Reply", "Seats", "Monito Monita", "Contact", "Message", "Updated"];
+    const esc = (v) => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+    const lines = [head.map(esc).join(",")].concat(all.map((r) => [
+      r.name, r.attending === "yes" ? "Darating" : "Hindi darating", r.attending === "yes" ? (Number(r.partySize) || 1) : 0,
+      isYes(r.monito) ? "Yes" : isNo(r.monito) ? "No" : "", r.contact, r.message, r.updatedAt
+    ].map(esc).join(",")));
+    const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "markha-rsvp-replies.csv";
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  $("login-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    pass = $("f-pass").value;
+    if (!pass) { setLogin("Enter the admin password.", true); return; }
+    load();
+  });
+  $("refresh").addEventListener("click", () => { checkSetup(); load(); });
+  $("export").addEventListener("click", exportCsv);
+  $("logout").addEventListener("click", () => { pass = ""; all = []; try { sessionStorage.removeItem(KEY); } catch (_) {} $("f-pass").value = ""; showLogin(); });
+  $("f-search").addEventListener("input", renderTable);
+  $("f-filter").addEventListener("change", renderTable);
+
+  checkSetup();
+  if (pass) load();
+})();
+</script>
+</body>
+</html>
