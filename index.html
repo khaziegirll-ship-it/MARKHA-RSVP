@@ -252,6 +252,18 @@ html { scroll-behavior: smooth; }
         </select>
       </div>
 
+      <div class="field" id="guest-names" hidden>
+        <p class="field-help">Pakilagay ang pangalan ng kasama mo para ma-reserve ang upuan nila.</p>
+        <div class="field" id="guest1-field">
+          <label class="lbl" for="f-guest1">Pangalan ng Guest 1</label>
+          <input id="f-guest1" type="text" maxlength="80" autocomplete="off" placeholder="hal. Juan Dela Cruz">
+        </div>
+        <div class="field" id="guest2-field">
+          <label class="lbl" for="f-guest2">Pangalan ng Guest 2</label>
+          <input id="f-guest2" type="text" maxlength="80" autocomplete="off" placeholder="hal. Ana Reyes">
+        </div>
+      </div>
+
       <div class="field">
         <label class="lbl" for="f-contact">Mobile o email</label>
         <input id="f-contact" type="text" maxlength="80" autocomplete="tel" placeholder="Para ma-contact ka ng host">
@@ -320,7 +332,17 @@ html { scroll-behavior: smooth; }
     const c = form.querySelector('input[name="attending"]:checked');
     return c ? c.value : null;
   }
-  function syncParty() { $("party-field").hidden = attendingValue() === "no"; }
+  function guestCount() { return attendingValue() === "no" ? 0 : getParty() - 1; }
+  function syncParty() {
+    $("party-field").hidden = attendingValue() === "no";
+    const g = guestCount();
+    $("guest-names").hidden = g < 1;
+    $("guest1-field").hidden = g < 1;
+    $("guest2-field").hidden = g < 2;
+  }
+  function guestNames() {
+    return ["f-guest1", "f-guest2"].slice(0, guestCount()).map((id) => $(id).value.trim());
+  }
   form.addEventListener("change", syncParty);
 
   function setStatus(text, err) { statusEl.textContent = text || ""; statusEl.classList.toggle("err", !!err); }
@@ -330,7 +352,8 @@ html { scroll-behavior: smooth; }
     $("thanks").hidden = false;
     if (r.attending === "yes") {
       $("thanks-title").textContent = "Kita-kits!";
-      $("thanks-text").textContent = r.name + ", naka-reserve na ang " + r.partySize + " upuan para sa'yo sa December 19, 7:00 pm. See you!";
+      const g = (r.guests || []).filter(Boolean);
+      $("thanks-text").textContent = r.name + ", naka-reserve na ang " + r.partySize + " upuan para sa'yo" + (g.length ? " at kay " + g.join(" at ") : "") + " sa December 19, 7:00 pm. See you!";
     } else {
       $("thanks-title").textContent = "Mami-miss ka namin";
       $("thanks-text").textContent = "Salamat sa pag-inform, " + r.name + ". Sana makasama ka namin next time!";
@@ -342,6 +365,9 @@ html { scroll-behavior: smooth; }
     $("f-name").value = r.name || "";
     if (r.attending) $(r.attending === "yes" ? "f-yes" : "f-no").checked = true;
     $("f-party").value = String(r.partySize || 1);
+    const g = Array.isArray(r.guests) ? r.guests : [];
+    $("f-guest1").value = g[0] || "";
+    $("f-guest2").value = g[1] || "";
     $("f-monito").value = (r.monito === "yes" || r.monito === true) ? "yes" : (r.monito === "no" || r.monito === false) ? "no" : "";
     $("f-contact").value = r.contact || "";
     $("f-msg").value = r.message || "";
@@ -355,6 +381,9 @@ html { scroll-behavior: smooth; }
     const attending = attendingValue();
     if (!name) { setStatus("Pakilagay ang pangalan mo para alam ng host kung sino ka.", true); $("f-name").focus(); return; }
     if (!attending) { setStatus("Pumili muna kung makakapunta ka o hindi.", true); return; }
+    const guests = attending === "yes" ? guestNames() : [];
+    const missing = guests.findIndex((g) => !g);
+    if (missing > -1) { setStatus("Pakilagay ang pangalan ng Guest " + (missing + 1) + ".", true); $("f-guest" + (missing + 1)).focus(); return; }
     if (!$("f-monito").value) { setStatus("Pumili ng Yes o No para sa Monito Monita.", true); $("f-monito").focus(); return; }
     const prev = loadSaved();
     const reply = {
@@ -362,6 +391,7 @@ html { scroll-behavior: smooth; }
       name,
       attending,
       partySize: attending === "yes" ? getParty() : 0,
+      guests,
       monito: $("f-monito").value,
       contact: $("f-contact").value.trim(),
       message: $("f-msg").value.trim()

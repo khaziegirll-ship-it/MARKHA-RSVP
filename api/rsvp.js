@@ -18,8 +18,14 @@ module.exports = async (req, res) => {
   if (!id || !name || !attending) return res.status(400).json({ error: "Name and attendance are required" });
 
   const partySize = attending === "yes" ? Math.max(1, Math.min(3, parseInt(body.partySize, 10) || 1)) : 0;
+  // One name per extra seat: "Ako + 1" needs 1 guest name, "Ako + 2" needs 2.
+  const rawGuests = Array.isArray(body.guests) ? body.guests : [];
+  const guests = [];
+  for (let i = 0; i < Math.max(0, partySize - 1); i++) guests.push(clip(rawGuests[i], 80));
+  if (guests.some((g) => !g)) return res.status(400).json({ error: "Please enter the name of each guest" });
+
   const reply = {
-    id, name, attending, partySize,
+    id, name, attending, partySize, guests,
     monito: body.monito === "yes" || body.monito === true ? "yes" : body.monito === "no" || body.monito === false ? "no" : "",
     contact: clip(body.contact, 80),
     message: clip(body.message, 600),

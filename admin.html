@@ -93,11 +93,16 @@ input[type=password], input[type=search] { font: inherit; color: var(--ink); bac
 .guests li { display: flex; justify-content: space-between; gap: 8px; padding-block: 7px; border-bottom: 1px dotted var(--rule); min-width: 0; }
 .guests .nm { overflow-wrap: anywhere; }
 .guests .ps { color: var(--ink-soft); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.guests .guest-of .nm { padding-left: 14px; position: relative; }
+.guests .guest-of .nm::before { content: "↳"; position: absolute; left: 0; color: var(--gold); }
+.guests .guest-of .ps { white-space: normal; text-align: right; overflow-wrap: anywhere; }
+td.gst { min-width: 140px; }
+td.gst span { display: block; }
 
 .tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .tools select { font: inherit; border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; background: #fff; min-height: 40px; }
 .tablewrap { overflow-x: auto; margin-top: 12px; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 760px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 900px; }
 th { text-align: left; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; padding: 8px; border-bottom: 1px solid var(--ink); white-space: nowrap; }
 td { padding: 9px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
 td.num { text-align: center; font-variant-numeric: tabular-nums; }
@@ -191,7 +196,7 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
         </div>
         <div class="tablewrap">
           <table>
-            <thead><tr><th>Bisita</th><th>Sagot</th><th>Upuan</th><th>Monito Monita</th><th>Contact</th><th>Message</th><th>Updated</th><th><span class="muted">Action</span></th></tr></thead>
+            <thead><tr><th>Bisita</th><th>Sagot</th><th>Upuan</th><th>Mga kasama</th><th>Monito Monita</th><th>Contact</th><th>Message</th><th>Updated</th><th><span class="muted">Action</span></th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
@@ -212,6 +217,7 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
 
   const isYes = (v) => v === "yes" || v === true;
   const isNo = (v) => v === "no" || v === false;
+  const guestsOf = (r) => (Array.isArray(r.guests) ? r.guests : []).filter(Boolean);
   const fmt = (iso) => { try { return new Date(iso).toLocaleString("en-PH", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); } catch (_) { return ""; } };
 
   function setDot(id, state) { const el = $(id); el.className = "dot " + state; el.textContent = state === "ok" ? "✓" : state === "bad" ? "!" : ""; }
@@ -288,6 +294,12 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
       const ps = document.createElement("span"); ps.className = "ps";
       const n = Number(r.partySize) || 1; ps.textContent = n === 1 ? "Ako lang" : "Ako + " + (n - 1);
       li.append(nm, ps); list.append(li);
+      guestsOf(r).forEach((g) => {
+        const gli = document.createElement("li"); gli.className = "guest-of";
+        const gn = document.createElement("span"); gn.className = "nm"; gn.textContent = g;
+        const gp = document.createElement("span"); gp.className = "ps"; gp.textContent = "kasama ni " + (r.name || "bisita");
+        gli.append(gn, gp); list.append(gli);
+      });
     });
     $("guests-empty").hidden = yes.length > 0;
     $("coming-count").textContent = seats + " upuan";
@@ -301,12 +313,12 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
     if (f === "yes") rows = rows.filter((r) => r.attending === "yes");
     if (f === "no") rows = rows.filter((r) => r.attending === "no");
     if (f === "monito") rows = rows.filter((r) => isYes(r.monito));
-    if (q) rows = rows.filter((r) => [r.name, r.contact, r.message].some((v) => String(v || "").toLowerCase().includes(q)));
+    if (q) rows = rows.filter((r) => [r.name, r.contact, r.message].concat(guestsOf(r)).some((v) => String(v || "").toLowerCase().includes(q)));
 
     const tb = $("rows"); tb.textContent = "";
     if (!rows.length) {
       const tr = document.createElement("tr"); const td = document.createElement("td");
-      td.colSpan = 8; td.className = "empty"; td.textContent = all.length ? "Walang tumugma sa search o filter." : "Lalabas dito ang mga reply habang sumasagot ang mga bisita.";
+      td.colSpan = 9; td.className = "empty"; td.textContent = all.length ? "Walang tumugma sa search o filter." : "Lalabas dito ang mga reply habang sumasagot ang mga bisita.";
       tr.append(td); tb.append(tr); return;
     }
     rows.forEach((r) => {
@@ -317,6 +329,9 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
       p.className = "pill " + (r.attending === "yes" ? "yes" : "no"); p.textContent = r.attending === "yes" ? "Darating" : "Hindi darating";
       s.append(p); tr.append(s);
       td(r.attending === "yes" ? String(Number(r.partySize) || 1) : "–", "num");
+      const gc = td("", "gst"); const gl = guestsOf(r);
+      if (!gl.length) gc.textContent = "–";
+      gl.forEach((g) => { const sp = document.createElement("span"); sp.textContent = g; gc.append(sp); });
       td(isYes(r.monito) ? "Yes" : isNo(r.monito) ? "No" : "–", "num");
       td(r.contact || "");
       td(r.message || "", "msg");
@@ -349,10 +364,11 @@ td.when { white-space: nowrap; color: var(--ink-soft); font-size: 13px; }
   }
 
   function exportCsv() {
-    const head = ["Name", "Reply", "Seats", "Monito Monita", "Contact", "Message", "Updated"];
+    const head = ["Name", "Reply", "Seats", "Guest 1", "Guest 2", "Monito Monita", "Contact", "Message", "Updated"];
     const esc = (v) => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
     const lines = [head.map(esc).join(",")].concat(all.map((r) => [
       r.name, r.attending === "yes" ? "Darating" : "Hindi darating", r.attending === "yes" ? (Number(r.partySize) || 1) : 0,
+      guestsOf(r)[0] || "", guestsOf(r)[1] || "",
       isYes(r.monito) ? "Yes" : isNo(r.monito) ? "No" : "", r.contact, r.message, r.updatedAt
     ].map(esc).join(",")));
     const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
