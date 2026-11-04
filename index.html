@@ -251,14 +251,14 @@ html { scroll-behavior: smooth; }
         <input id="f-contact" type="text" maxlength="80" autocomplete="tel" placeholder="Para ma-contact ka ng host">
       </div>
 
-      <fieldset>
-        <legend>Poll</legend>
-        <label class="check" for="f-monito">
-          <input type="checkbox" id="f-monito">
-          <span class="box" aria-hidden="true"></span>
-          <span>Would you like to have <strong>Monito Monita</strong>?</span>
-        </label>
-      </fieldset>
+      <div class="field">
+        <label class="lbl" for="f-monito">Would you like to have Monito Monita (Exchange gift)?</label>
+        <select id="f-monito" required>
+          <option value="" disabled selected>Pumili ng sagot</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
 
       <div class="field">
         <label class="lbl" for="f-msg">Message para sa host</label>
@@ -336,7 +336,7 @@ html { scroll-behavior: smooth; }
     $("f-name").value = r.name || "";
     if (r.attending) $(r.attending === "yes" ? "f-yes" : "f-no").checked = true;
     $("f-party").value = String(r.partySize || 1);
-    $("f-monito").checked = !!r.monito;
+    $("f-monito").value = (r.monito === "yes" || r.monito === true) ? "yes" : (r.monito === "no" || r.monito === false) ? "no" : "";
     $("f-contact").value = r.contact || "";
     $("f-msg").value = r.message || "";
     syncParty();
@@ -349,13 +349,14 @@ html { scroll-behavior: smooth; }
     const attending = attendingValue();
     if (!name) { setStatus("Pakilagay ang pangalan mo para alam ng host kung sino ka.", true); $("f-name").focus(); return; }
     if (!attending) { setStatus("Pumili muna kung makakapunta ka o hindi.", true); return; }
+    if (!$("f-monito").value) { setStatus("Pumili ng Yes o No para sa Monito Monita.", true); $("f-monito").focus(); return; }
     const prev = loadSaved();
     const reply = {
       id: (prev && prev.id) || newId(),
       name,
       attending,
       partySize: attending === "yes" ? getParty() : 0,
-      monito: $("f-monito").checked,
+      monito: $("f-monito").value,
       contact: $("f-contact").value.trim(),
       message: $("f-msg").value.trim()
     };

@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
   const partySize = attending === "yes" ? Math.max(1, Math.min(3, parseInt(body.partySize, 10) || 1)) : 0;
   const reply = {
     id, name, attending, partySize,
-    monito: !!body.monito,
+    monito: body.monito === "yes" || body.monito === true ? "yes" : body.monito === "no" || body.monito === false ? "no" : "",
     contact: clip(body.contact, 80),
     message: clip(body.message, 600),
     updatedAt: new Date().toISOString()

@@ -274,7 +274,8 @@ input[type=password] { width: 100%; font: inherit; color: var(--ink); background
     const yes = rsvps.filter((r) => r.attending === "yes");
     const no = rsvps.filter((r) => r.attending === "no");
     const seats = yes.reduce((s, r) => s + (Number(r.partySize) || 1), 0);
-    const monito = rsvps.filter((r) => r.monito).length;
+    const isYes = (v) => v === "yes" || v === true;
+    const monito = rsvps.filter((r) => isYes(r.monito)).length;
 
     const t = $("tally"); t.textContent = "";
     const b = document.createElement("b"); b.textContent = seats;
@@ -298,7 +299,7 @@ input[type=password] { width: 100%; font: inherit; color: var(--ink); background
     }
     sorted.forEach((r) => {
       const tr = document.createElement("tr");
-      const cells = [r.name || "Bisita", null, r.attending === "yes" ? String(r.partySize || 1) : "–", r.monito ? "✓" : "", r.contact || "", r.message || ""];
+      const cells = [r.name || "Bisita", null, r.attending === "yes" ? String(r.partySize || 1) : "–", isYes(r.monito) ? "Yes" : (r.monito === "no" || r.monito === false) ? "No" : "–", r.contact || "", r.message || ""];
       cells.forEach((v, i) => {
         const td = document.createElement("td");
         if (i === 1) { const p = document.createElement("span"); p.className = "pill " + (r.attending === "yes" ? "yes" : "no"); p.textContent = r.attending === "yes" ? "Darating" : "Hindi darating"; td.append(p); }
