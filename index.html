@@ -254,7 +254,7 @@ html { scroll-behavior: smooth; }
         </div>
       </fieldset>
 
-      <div class="field" id="party-field">
+      <div class="field" id="party-field" hidden>
         <label class="lbl" for="f-party">Ilan kayong darating?</label>
         <select id="f-party">
           <option value="1">Ako lang</option>
@@ -333,14 +333,21 @@ html { scroll-behavior: smooth; }
   function loadSaved() { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (_) { return null; } }
   function saveLocal(r) { try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (_) {} }
 
-  function getParty() { return Math.max(1, Math.min(MAX_SEATS, Number($("f-party").value) || 1)); }
+  // Only Wilmer Medina may bring a +1; everyone else reserves one seat.
+  function plusOneAllowed() {
+    const w = $("f-name").value.toLowerCase().normalize("NFD").replace(/[^a-z\s]/g, " ").split(/\s+/);
+    return w.includes("wilmer") && w.includes("medina");
+  }
+  function getParty() { return plusOneAllowed() ? Math.max(1, Math.min(MAX_SEATS, Number($("f-party").value) || 1)) : 1; }
   function attendingValue() {
     const c = form.querySelector('input[name="attending"]:checked');
     return c ? c.value : null;
   }
   function guestCount() { return attendingValue() === "no" ? 0 : getParty() - 1; }
   function syncParty() {
-    $("party-field").hidden = attendingValue() === "no";
+    const canPlus = plusOneAllowed();
+    $("party-field").hidden = attendingValue() === "no" || !canPlus;
+    if (!canPlus) $("f-party").value = "1";
     const g = guestCount();
     $("guest-names").hidden = g < 1;
     $("guest1-field").hidden = g < 1;
@@ -349,6 +356,7 @@ html { scroll-behavior: smooth; }
     return ["f-guest1"].slice(0, guestCount()).map((id) => $(id).value.trim());
   }
   form.addEventListener("change", syncParty);
+  $("f-name").addEventListener("input", syncParty);
 
   function setStatus(text, err) { statusEl.textContent = text || ""; statusEl.classList.toggle("err", !!err); }
 
