@@ -262,6 +262,8 @@ html { scroll-behavior: smooth; }
         </select>
       </div>
 
+      <p class="seats-note" id="one-seat-note" hidden><strong>Paalala:</strong> Dahil limited seats lang tayo, <b>isang (1) upuan lang po</b> ang naka-reserve para sa bawat bisita, kaya hindi na po puwedeng magsama ng +1. Salamat sa pag-unawa, excited na kaming makita ka! 🎄</p>
+
       <div class="field" id="guest-names" hidden>
         <p class="field-help">Isang kasama (+1) lang ang puwede. Pakilagay ang pangalan niya para ma-reserve ang upuan.</p>
         <div class="field" id="guest1-field">
@@ -348,6 +350,7 @@ html { scroll-behavior: smooth; }
     const canPlus = plusOneAllowed();
     $("party-field").hidden = attendingValue() === "no" || !canPlus;
     if (!canPlus) $("f-party").value = "1";
+    $("one-seat-note").hidden = attendingValue() === "no" || canPlus || !$("f-name").value.trim();
     const g = guestCount();
     $("guest-names").hidden = g < 1;
     $("guest1-field").hidden = g < 1;
